@@ -17,6 +17,7 @@ Bluetooth Guardian is an independent Android project built with **Kotlin + Jetpa
 
 - **BLE Radar** — discover nearby BLE advertisements and display available device name, address (when permitted), and signal strength.
 - **Evidence-first assessment** — review firmware status, vendor advisories, pairing configuration, and documented observations.
+- **Device Intelligence (Phase 3)** — local review checklist for vendor/model/firmware, advisory checks, update status, pairing, unused services, and physical-access considerations. Reports checklist completion—not a vulnerability or safety score.
 - **Authorization gate** — assessment report generation requires an ownership/permission confirmation.
 - **Local synthetic lab** — adjustable simulated workload and packet-loss values. This simulator does not transmit Bluetooth traffic.
 - **Privacy-conscious baseline** — no account, analytics, or cloud backend is included in this prototype.
@@ -27,7 +28,7 @@ Bluetooth Guardian is an independent Android project built with **Kotlin + Jetpa
 |---|---|---|
 | 01 | Android app foundation and BLE discovery | Prototype |
 | 02 | Security assessment checklist and local simulator | Prototype |
-| 03 | Evidence-based device intelligence and confidence scoring | Planned |
+| 03 | Evidence-based device intelligence checklist | Implemented (prototype) |
 | 04 | Exportable assessment reports (JSON / CSV) | Planned |
 | 05 | Lab device allowlist, consent workflow, and safety limits | Planned |
 | 06 | Futuristic cyber dashboard, radar visualization, and accessibility polish | Planned |
