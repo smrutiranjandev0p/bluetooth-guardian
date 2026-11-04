@@ -170,25 +170,18 @@ private fun Home(
 
         when (selectedTab) {
             0 -> {
-                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
-                    Button(onClick = scan, enabled = !scanActive) { Text("Scan BLE (15 sec)") }
-                    Spacer(Modifier.width(8.dp))
-                    OutlinedButton(onClick = stop, enabled = scanActive) { Text("Stop") }
-                    Spacer(Modifier.width(8.dp))
-                    Text(if (scanActive) "Scanning…" else "Standby")
-                }
-                Text("Discovered: ${rows.size}")
-                LazyColumn {
-                    items(rows, key = { it.address }) { device ->
-                        Card(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
-                            Column(Modifier.padding(12.dp)) {
-                                Text(device.name)
-                                Text(device.address)
-                                Text("${device.rssi} dBm")
-                            }
-                        }
-                    }
-                }
+                GuardianDashboard(
+                    devices = rows.map { device ->
+                        GuardianRadarItem(
+                            label = device.name,
+                            detail = device.address,
+                            rssi = device.rssi
+                        )
+                    },
+                    scanActive = scanActive,
+                    onScanToggle = { if (scanActive) stop() else scan() },
+                    modifier = Modifier.fillMaxSize()
+                )
             }
             1 -> Assessment()
             2 -> DeviceIntelligence()
