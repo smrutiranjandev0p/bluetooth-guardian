@@ -31,7 +31,7 @@ Bluetooth Guardian is an independent Android project built with **Kotlin + Jetpa
 | 03 | Evidence-based device intelligence checklist | Implemented (prototype) |
 | 04 | Evidence-aware JSON/CSV report model and schema | Implemented (prototype) |
 | 05 | Android document-picker export helper | Implemented (integration pending) |
-| 06 | Futuristic cyber dashboard, radar visualization, and accessibility polish | Planned |
+| 06 | Futuristic cyber dashboard and animated radar UI prototype | Implemented (UI prototype; integration pending) |
 | 07 | Lab guardrails, automated tests, privacy review, and release hardening | Planned |
 
 ## 🧰 Tech stack
@@ -84,3 +84,8 @@ The report model and JSON/CSV schema are documented in [`docs/REPORT-EXPORT.md`]
 ## Phase 5 — Android Export Engine
 
 User-mediated JSON/CSV save helpers are available in [`ReportExport.kt`](app/src/main/java/com/bluetoothguardian/security/ReportExport.kt), with integration guidance in [`PHASE-5-EXPORT-INTEGRATION.md`](docs/PHASE-5-EXPORT-INTEGRATION.md). MainActivity wiring and Android build validation remain pending.
+
+
+## Phase 6 — Guardian Command Center
+
+The Compose dashboard prototype is in [`GuardianDashboard.kt`](app/src/main/java/com/bluetoothguardian/security/GuardianDashboard.kt). Integration notes and accessibility tasks are in [`PHASE-6-GUARDIAN-DASHBOARD.md`](docs/PHASE-6-GUARDIAN-DASHBOARD.md). BLE callbacks, app entry-point wiring, reduced-motion settings, and build verification remain pending.
