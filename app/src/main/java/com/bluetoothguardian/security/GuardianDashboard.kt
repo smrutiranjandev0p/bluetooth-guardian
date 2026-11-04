@@ -37,6 +37,8 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -45,7 +47,7 @@ private val GuardianViolet = Color(0xFF9B7BFF)
 private val GuardianBackground = Color(0xFF080B16)
 private val GuardianPanel = Color(0xFF11182A)
 
-/** UI-only dashboard preview. Connect real BLE observations in the app integration phase. */
+/** Dashboard for passive BLE observations. */
 data class GuardianRadarItem(
     val label: String,
     val detail: String,
@@ -210,7 +212,15 @@ private fun SignalCard(item: GuardianRadarItem) {
                 Text(item.detail, color = Color(0xFF9BAAC8), fontSize = 10.sp)
                 if (item.isAuthorized) Text("AUTHORIZED REVIEW DEVICE", color = GuardianCyan, fontSize = 9.sp)
             }
-            Text("${item.rssi} dBm", color = GuardianCyan, fontWeight = FontWeight.Bold, fontSize = 12.sp)
+            Text(
+                "${item.rssi} dBm",
+                color = GuardianCyan,
+                fontWeight = FontWeight.Bold,
+                fontSize = 12.sp,
+                modifier = Modifier.semantics {
+                    contentDescription = "Signal strength ${item.rssi} decibels relative to one milliwatt"
+                }
+            )
         }
     }
 }
