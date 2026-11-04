@@ -8,6 +8,8 @@ import android.bluetooth.le.ScanSettings
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,11 +22,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 
+private const val SCAN_WINDOW_MS = 15_000L
+
 data class DeviceRow(val name: String, val address: String, val rssi: Int)
 
 class MainActivity : ComponentActivity() {
     private val rows = mutableStateListOf<DeviceRow>()
     private var callback: ScanCallback? = null
+    private var scanActive by mutableStateOf(false)
+    private val scanHandler = Handler(Looper.getMainLooper())
+    private val scanTimeout = Runnable { stopScan() }
 
     private val permissions: Array<String>
         get() = if (Build.VERSION.SDK_INT >= 31) {
@@ -42,6 +49,7 @@ class MainActivity : ComponentActivity() {
         }
 
     private fun startScan() {
+        if (scanActive) return
         if (permissions.any {
                 ContextCompat.checkSelfPermission(this, it) != PackageManager.PERMISSION_GRANTED
             }) {
@@ -49,8 +57,10 @@ class MainActivity : ComponentActivity() {
             return
         }
 
-        val adapter = (getSystemService(BLUETOOTH_SERVICE) as BluetoothManager).adapter ?: return
-        val scanner = adapter.bluetoothLeScanner ?: return
+        val manager = getSystemService(BLUETOOTH_SERVICE) as BluetoothManager
+        val adapter = try { manager.adapter } catch (_: SecurityException) { null }
+        if (adapter == null || !adapter.isEnabled) return
+        val scanner = try { adapter.bluetoothLeScanner } catch (_: SecurityException) { null } ?: return
         rows.clear()
 
         callback = object : ScanCallback() {
@@ -67,9 +77,13 @@ class MainActivity : ComponentActivity() {
                     "Address restricted"
                 }
 
-                if (rows.none { it.address == address }) {
-                    rows.add(DeviceRow(name, address, result.rssi))
-                }
+                val index = rows.indexOfFirst { it.address == address }
+                val row = DeviceRow(name, address, result.rssi)
+                if (index >= 0) rows[index] = row else rows.add(row)
+            }
+
+            override fun onScanFailed(errorCode: Int) {
+                stopScan()
             }
         }
 
@@ -77,22 +91,33 @@ class MainActivity : ComponentActivity() {
             scanner.startScan(
                 null,
                 ScanSettings.Builder()
-                    .setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY)
+                    .setScanMode(ScanSettings.SCAN_MODE_LOW_POWER)
                     .build(),
                 callback
             )
+            scanActive = true
+            scanHandler.removeCallbacks(scanTimeout)
+            scanHandler.postDelayed(scanTimeout, SCAN_WINDOW_MS)
         } catch (_: SecurityException) {
-            // Permission may have been revoked while the screen was open.
+            scanActive = false
+            callback = null
+        } catch (_: IllegalStateException) {
+            scanActive = false
+            callback = null
         }
     }
 
     private fun stopScan() {
+        scanHandler.removeCallbacks(scanTimeout)
         try {
             val scanner =
                 (getSystemService(BLUETOOTH_SERVICE) as BluetoothManager).adapter?.bluetoothLeScanner
             callback?.let { scanner?.stopScan(it) }
         } catch (_: Exception) {
-            // Scanner may already be stopped or Bluetooth may be unavailable.
+            // Bluetooth can be disabled or permission can be revoked mid-session.
+        } finally {
+            callback = null
+            scanActive = false
         }
     }
 
@@ -100,7 +125,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-                Home(rows = rows, scan = ::startScan, stop = ::stopScan)
+                Home(rows = rows, scanActive = scanActive, scan = ::startScan, stop = ::stopScan)
             }
         }
     }
@@ -109,10 +134,21 @@ class MainActivity : ComponentActivity() {
         stopScan()
         super.onStop()
     }
+
+    override fun onDestroy() {
+        stopScan()
+        scanHandler.removeCallbacksAndMessages(null)
+        super.onDestroy()
+    }
 }
 
 @Composable
-private fun Home(rows: List<DeviceRow>, scan: () -> Unit, stop: () -> Unit) {
+private fun Home(
+    rows: List<DeviceRow>,
+    scanActive: Boolean,
+    scan: () -> Unit,
+    stop: () -> Unit
+) {
     var selectedTab by remember { mutableIntStateOf(0) }
 
     Column(Modifier.fillMaxSize().padding(16.dp)) {
@@ -131,14 +167,16 @@ private fun Home(rows: List<DeviceRow>, scan: () -> Unit, stop: () -> Unit) {
 
         when (selectedTab) {
             0 -> {
-                Row {
-                    Button(onClick = scan) { Text("Scan BLE") }
+                Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                    Button(onClick = scan, enabled = !scanActive) { Text("Scan BLE (15 sec)") }
                     Spacer(Modifier.width(8.dp))
-                    OutlinedButton(onClick = stop) { Text("Stop") }
+                    OutlinedButton(onClick = stop, enabled = scanActive) { Text("Stop") }
+                    Spacer(Modifier.width(8.dp))
+                    Text(if (scanActive) "Scanning…" else "Standby")
                 }
                 Text("Discovered: ${rows.size}")
                 LazyColumn {
-                    items(rows) { device ->
+                    items(rows, key = { it.address }) { device ->
                         Card(Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
                             Column(Modifier.padding(12.dp)) {
                                 Text(device.name)
@@ -156,7 +194,7 @@ private fun Home(rows: List<DeviceRow>, scan: () -> Unit, stop: () -> Unit) {
 
         Spacer(Modifier.height(8.dp))
         Text(
-            "Only test devices you own or are authorized to assess.",
+            "Only test devices you own or are authorized to assess. BLE scanning is passive discovery.",
             style = MaterialTheme.typography.bodySmall
         )
     }
