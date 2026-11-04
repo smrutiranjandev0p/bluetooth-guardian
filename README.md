@@ -32,7 +32,7 @@ Bluetooth Guardian is an independent Android project built with **Kotlin + Jetpa
 | 04 | Evidence-aware JSON/CSV report model and schema | Implemented (prototype) |
 | 05 | Android document-picker export helper | Implemented (integration pending) |
 | 06 | Futuristic cyber dashboard and animated radar UI prototype | Implemented (UI prototype; integration pending) |
-| 07 | BLE scan timeout, lifecycle cleanup, live RSSI updates, and app safety polish | Implemented (source; build validation pending) |\n| 08 | GitHub Actions Android build, unit-test task, and debug APK artifact | CI workflow added (first run pending) |
+| 07 | BLE scan timeout, lifecycle cleanup, live RSSI updates, and app safety polish | Implemented (source; build validation pending) |\n| 08 | GitHub Actions Android build, unit-test task, and debug APK artifact | CI workflow added (build verification pending) |\n| 09 | Assessment JSON/CSV export through Android document picker | Source integration committed (CI/device validation pending) |
 
 ## 🧰 Tech stack
 
@@ -103,3 +103,10 @@ GitHub Actions workflow: [android-ci.yml](.github/workflows/android-ci.yml)
 On pushes to `main`, pull requests, or manual dispatch, CI configures JDK 17 and Gradle 8.9, builds the debug APK, runs the Android unit-test task, and uploads the APK as a short-retention artifact after successful completion.
 
 **Current status:** workflow committed; first GitHub Actions run and Android compilation are not yet verified. This repository still does not include a Gradle wrapper, so CI currently uses the pinned Gradle installation on the runner.
+
+
+## Phase 9 — In-App Assessment Export
+
+Assessment reports can now be prepared and saved as JSON or CSV through Android's system document picker. See [Phase 9 integration notes](docs/PHASE-9-REPORT-EXPORT-INTEGRATION.md).
+
+Export is user-initiated and local. Authorization confirmation is required, and the report explicitly states that checklist progress is not a vulnerability verdict.
