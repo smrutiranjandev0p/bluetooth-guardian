@@ -32,7 +32,7 @@ Bluetooth Guardian is an independent Android project built with **Kotlin + Jetpa
 | 04 | Evidence-aware JSON/CSV report model and schema | Implemented (prototype) |
 | 05 | Android document-picker export helper | Implemented (integration pending) |
 | 06 | Futuristic cyber dashboard and animated radar UI prototype | Implemented (UI prototype; integration pending) |
-| 07 | BLE scan timeout, lifecycle cleanup, live RSSI updates, and app safety polish | Implemented (source; build validation pending) |
+| 07 | BLE scan timeout, lifecycle cleanup, live RSSI updates, and app safety polish | Implemented (source; build validation pending) |\n| 08 | GitHub Actions Android build, unit-test task, and debug APK artifact | CI workflow added (first run pending) |
 
 ## 🧰 Tech stack
 
@@ -94,3 +94,12 @@ The Compose dashboard prototype is in [`GuardianDashboard.kt`](app/src/main/java
 ## Phase 7 — Scanner Safety
 
 The BLE scanner now uses a bounded 15-second session, explicit stop, lifecycle cleanup, low-power scan mode, and updated RSSI observations. See [`MainActivity.kt`](app/src/main/java/com/bluetoothguardian/security/MainActivity.kt) and [`PHASE-7-SCANNER-HARDENING.md`](docs/PHASE-7-SCANNER-HARDENING.md). Android build and physical-device validation remain pending.
+
+
+## Phase 8 — Automated Build Pipeline
+
+GitHub Actions workflow: [android-ci.yml](.github/workflows/android-ci.yml)
+
+On pushes to `main`, pull requests, or manual dispatch, CI configures JDK 17 and Gradle 8.9, builds the debug APK, runs the Android unit-test task, and uploads the APK as a short-retention artifact after successful completion.
+
+**Current status:** workflow committed; first GitHub Actions run and Android compilation are not yet verified. This repository still does not include a Gradle wrapper, so CI currently uses the pinned Gradle installation on the runner.
