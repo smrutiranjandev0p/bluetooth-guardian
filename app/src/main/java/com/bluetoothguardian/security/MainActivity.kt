@@ -120,7 +120,7 @@ private fun Home(rows: List<DeviceRow>, scan: () -> Unit, stop: () -> Unit) {
         Text("Research Edition • Authorized Lab")
 
         TabRow(selectedTabIndex = selectedTab) {
-            listOf("Radar", "Assessment", "Lab").forEachIndexed { index, title ->
+            listOf("Radar", "Assessment", "Intel", "Lab").forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTab == index,
                     onClick = { selectedTab = index },
@@ -150,6 +150,7 @@ private fun Home(rows: List<DeviceRow>, scan: () -> Unit, stop: () -> Unit) {
                 }
             }
             1 -> Assessment()
+            2 -> DeviceIntelligence()
             else -> LabSimulator()
         }
 
