@@ -32,7 +32,7 @@ Bluetooth Guardian is an independent Android project built with **Kotlin + Jetpa
 | 04 | Evidence-aware JSON/CSV report model and schema | Implemented (prototype) |
 | 05 | Android document-picker export helper | Implemented (integration pending) |
 | 06 | Futuristic cyber dashboard and animated radar UI prototype | Implemented (UI prototype; integration pending) |
-| 07 | Lab guardrails, automated tests, privacy review, and release hardening | Planned |
+| 07 | BLE scan timeout, lifecycle cleanup, live RSSI updates, and app safety polish | Implemented (source; build validation pending) |
 
 ## 🧰 Tech stack
 
@@ -89,3 +89,8 @@ User-mediated JSON/CSV save helpers are available in [`ReportExport.kt`](app/src
 ## Phase 6 — Guardian Command Center
 
 The Compose dashboard prototype is in [`GuardianDashboard.kt`](app/src/main/java/com/bluetoothguardian/security/GuardianDashboard.kt). Integration notes and accessibility tasks are in [`PHASE-6-GUARDIAN-DASHBOARD.md`](docs/PHASE-6-GUARDIAN-DASHBOARD.md). BLE callbacks, app entry-point wiring, reduced-motion settings, and build verification remain pending.
+
+
+## Phase 7 — Scanner Safety
+
+The BLE scanner now uses a bounded 15-second session, explicit stop, lifecycle cleanup, low-power scan mode, and updated RSSI observations. See [`MainActivity.kt`](app/src/main/java/com/bluetoothguardian/security/MainActivity.kt) and [`PHASE-7-SCANNER-HARDENING.md`](docs/PHASE-7-SCANNER-HARDENING.md). Android build and physical-device validation remain pending.
