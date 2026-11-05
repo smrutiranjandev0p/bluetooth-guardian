@@ -83,3 +83,7 @@ Issues and pull requests are welcome for defensive features, documentation, acce
 ## 📄 License
 
 MIT — see [LICENSE](LICENSE).
+
+## Phase 13 — Release Readiness & QA Gate
+
+A release gate now tracks CI, physical-device checks, BLE permission/lifecycle behavior, JSON/CSV export, accessibility, privacy review, and signing. The app remains a research prototype until the outstanding device and release checks are completed. See [Phase 13 release readiness](docs/PHASE-13-RELEASE-READINESS.md).
